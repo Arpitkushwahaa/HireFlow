@@ -11,7 +11,7 @@
   }
   
   body {
-    @apply bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900;
+    @apply bg-gradient-to-br from-black via-slate-950 to-black;
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -24,8 +24,8 @@
 }
 
 @keyframes glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
-  50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.8), 0 0 60px rgba(168, 85, 247, 0.6); }
+  0%, 100% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.15); }
+  50% { box-shadow: 0 0 25px rgba(168, 85, 247, 0.25), 0 0 35px rgba(168, 85, 247, 0.2); }
 }
 
 @keyframes gradient-shift {
@@ -68,17 +68,17 @@
 
 /* Glassmorphism */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(15, 15, 25, 0.6);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .glass-strong {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(15, 15, 25, 0.8);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* 3D Card Effect */
@@ -94,10 +94,9 @@
 /* Neon text */
 .neon-text {
   text-shadow: 
-    0 0 10px rgba(168, 85, 247, 0.8),
-    0 0 20px rgba(168, 85, 247, 0.6),
-    0 0 30px rgba(168, 85, 247, 0.4),
-    0 0 40px rgba(168, 85, 247, 0.2);
+    0 0 10px rgba(168, 85, 247, 0.3),
+    0 0 20px rgba(168, 85, 247, 0.2),
+    0 0 30px rgba(168, 85, 247, 0.1);
 }
 
 /* Gradient borders */
