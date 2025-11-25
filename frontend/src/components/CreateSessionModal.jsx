@@ -1,5 +1,7 @@
 import { Code2Icon, LoaderIcon, PlusIcon } from "lucide-react";
 import { PROBLEMS } from "../data/problems";
+import { DSA_PROBLEMS, DIFFICULTY_COLORS } from "../data/dsaProblems";
+import { INTERVIEW_QUESTIONS } from "../data/interviewQuestions";
 
 function CreateSessionModal({
   isOpen,
@@ -11,6 +13,24 @@ function CreateSessionModal({
 }) {
   const problems = Object.values(PROBLEMS);
   const interviewTypes = ["HR", "Full-Stack", "Backend", "Frontend", "Product Engineer", "DSA", "System Design"];
+
+  // Get problems based on selected interview type
+  const getProblemsForInterviewType = () => {
+    if (!roomConfig.interviewType) return [];
+    
+    if (roomConfig.interviewType === "DSA") {
+      return Object.values(DSA_PROBLEMS);
+    } else {
+      return INTERVIEW_QUESTIONS[roomConfig.interviewType] || [];
+    }
+  };
+
+  const availableProblems = getProblemsForInterviewType();
+
+  // Get difficulty color
+  const getDifficultyColor = (difficulty) => {
+    return DIFFICULTY_COLORS[difficulty] || "#666";
+  };
 
   if (!isOpen) return null;
 
