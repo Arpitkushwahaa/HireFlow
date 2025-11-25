@@ -10,6 +10,7 @@ function CreateSessionModal({
   isCreating,
 }) {
   const problems = Object.values(PROBLEMS);
+  const interviewTypes = ["HR", "Full-Stack", "Backend", "Frontend", "Product Engineer", "DSA", "System Design"];
 
   if (!isOpen) return null;
 
@@ -19,6 +20,35 @@ function CreateSessionModal({
         <h3 className="font-bold text-2xl mb-6">Create New Session</h3>
 
         <div className="space-y-8">
+          {/* INTERVIEW TYPE SELECTION */}
+          <div className="space-y-2">
+            <label className="label">
+              <span className="label-text font-semibold">Interview Type</span>
+              <span className="label-text-alt text-error">*</span>
+            </label>
+
+            <select
+              className="select w-full"
+              value={roomConfig.interviewType || ""}
+              onChange={(e) => {
+                setRoomConfig({
+                  ...roomConfig,
+                  interviewType: e.target.value,
+                });
+              }}
+            >
+              <option value="" disabled>
+                Choose interview type...
+              </option>
+
+              {interviewTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* PROBLEM SELECTION */}
           <div className="space-y-2">
             <label className="label">
@@ -50,11 +80,14 @@ function CreateSessionModal({
           </div>
 
           {/* ROOM SUMMARY */}
-          {roomConfig.problem && (
+          {roomConfig.problem && roomConfig.interviewType && (
             <div className="alert alert-success">
               <Code2Icon className="size-5" />
               <div>
                 <p className="font-semibold">Room Summary:</p>
+                <p>
+                  Interview Type: <span className="font-medium">{roomConfig.interviewType}</span>
+                </p>
                 <p>
                   Problem: <span className="font-medium">{roomConfig.problem}</span>
                 </p>
@@ -74,7 +107,7 @@ function CreateSessionModal({
           <button
             className="btn btn-primary gap-2"
             onClick={onCreateRoom}
-            disabled={isCreating || !roomConfig.problem}
+            disabled={isCreating || !roomConfig.problem || !roomConfig.interviewType}
           >
             {isCreating ? (
               <LoaderIcon className="size-5 animate-spin" />

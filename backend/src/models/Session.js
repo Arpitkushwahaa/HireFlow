@@ -11,6 +11,11 @@ const sessionSchema = new mongoose.Schema(
       enum: ["easy", "medium", "hard"],
       required: true,
     },
+    interviewType: {
+      type: String,
+      enum: ["HR", "Full-Stack", "Backend", "Frontend", "Product Engineer", "DSA", "System Design"],
+      required: true,
+    },
     host: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
