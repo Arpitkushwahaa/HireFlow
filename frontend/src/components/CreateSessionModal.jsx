@@ -1,6 +1,5 @@
 import { Code2Icon, LoaderIcon, PlusIcon } from "lucide-react";
-import { PROBLEMS } from "../data/problems";
-import { DSA_PROBLEMS, DIFFICULTY_COLORS } from "../data/dsaProblems";
+import { PROBLEMS, DIFFICULTY_COLORS } from "../data/problems";
 import { INTERVIEW_QUESTIONS } from "../data/interviewQuestions";
 
 function CreateSessionModal({
@@ -11,7 +10,6 @@ function CreateSessionModal({
   onCreateRoom,
   isCreating,
 }) {
-  const problems = Object.values(PROBLEMS);
   const interviewTypes = ["HR", "Full-Stack", "Backend", "Frontend", "Product Engineer", "DSA", "System Design"];
 
   // Get problems based on selected interview type
@@ -19,8 +17,10 @@ function CreateSessionModal({
     if (!roomConfig.interviewType) return [];
     
     if (roomConfig.interviewType === "DSA") {
-      return Object.values(DSA_PROBLEMS);
+      // Filter PROBLEMS by interviewType === "DSA"
+      return Object.values(PROBLEMS).filter(p => p.interviewType === "DSA");
     } else {
+      // Return interview-specific questions
       return INTERVIEW_QUESTIONS[roomConfig.interviewType] || [];
     }
   };
