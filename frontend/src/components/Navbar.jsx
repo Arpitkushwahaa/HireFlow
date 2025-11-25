@@ -5,69 +5,73 @@ import { UserButton } from "@clerk/clerk-react";
 function Navbar() {
   const location = useLocation();
 
-  console.log(location);
-
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-base-100/80 backdrop-blur-md border-b border-primary/20 sticky top-0 z-50 shadow-lg">
-      <div className="max-w-7xl mx-auto p-4 flex items-center justify-between">
+    <nav className="glass-strong sticky top-0 z-50 border-b border-purple-500/20">
+      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* LOGO */}
         <Link
           to="/"
-          className="group flex items-center gap-3 hover:scale-105 transition-transform duration-200"
+          className="group flex items-center gap-3 hover:scale-105 transition-all duration-300"
         >
-          <div className="size-10 rounded-xl bg-gradient-to-r from-primary via-secondary to-accent flex items-center justify-center shadow-lg ">
-            <SparklesIcon className="size-6 text-white" />
+          <div className="size-12 rounded-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 flex items-center justify-center shadow-2xl animate-glow">
+            <SparklesIcon className="size-7 text-white" />
           </div>
 
           <div className="flex flex-col">
-            <span className="font-black text-xl bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent font-mono tracking-wider">
+            <span className="font-black text-2xl bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent tracking-wider neon-text">
               HireFlow
             </span>
-            <span className="text-xs text-base-content/60 font-medium -mt-1">Code Together</span>
+            <span className="text-xs text-purple-300 font-medium -mt-1">Code • Connect • Conquer</span>
           </div>
         </Link>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           {/* PROBLEMS PAGE LINK */}
           <Link
             to={"/problems"}
-            className={`px-4 py-2.5 rounded-lg transition-all duration-200 
+            className={`group relative px-6 py-3 rounded-xl transition-all duration-300 overflow-hidden
               ${
                 isActive("/problems")
-                  ? "bg-primary text-primary-content"
-                  : "hover:bg-base-200 text-base-content/70 hover:text-base-content"
+                  ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/50"
+                  : "glass text-purple-200 hover:text-white border border-purple-500/20 hover:border-purple-500/40"
               }
-              
-              `}
+            `}
           >
-            <div className="flex items-center gap-x-2.5">
-              <BookOpenIcon className="size-4" />
-              <span className="font-medium hidden sm:inline">Problems</span>
+            <div className="relative z-10 flex items-center gap-2.5">
+              <BookOpenIcon className="size-5" />
+              <span className="font-bold hidden sm:inline">Problems</span>
             </div>
+            {!isActive("/problems") && (
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/0 via-purple-600/10 to-purple-600/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            )}
           </Link>
 
-          {/* DASHBORD PAGE LINK */}
+          {/* DASHBOARD PAGE LINK */}
           <Link
             to={"/dashboard"}
-            className={`px-4 py-2.5 rounded-lg transition-all duration-200 
+            className={`group relative px-6 py-3 rounded-xl transition-all duration-300 overflow-hidden
               ${
                 isActive("/dashboard")
-                  ? "bg-primary text-primary-content"
-                  : "hover:bg-base-200 text-base-content/70 hover:text-base-content"
+                  ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/50"
+                  : "glass text-purple-200 hover:text-white border border-purple-500/20 hover:border-purple-500/40"
               }
-              
-              `}
+            `}
           >
-            <div className="flex items-center gap-x-2.5">
-              <LayoutDashboardIcon className="size-4" />
-              <span className="font-medium hidden sm:inline">Dashbord</span>
+            <div className="relative z-10 flex items-center gap-2.5">
+              <LayoutDashboardIcon className="size-5" />
+              <span className="font-bold hidden sm:inline">Dashboard</span>
             </div>
+            {!isActive("/dashboard") && (
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/0 via-purple-600/10 to-purple-600/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            )}
           </Link>
 
-          <div className="ml-4 mt-2">
-            <UserButton />
+          <div className="ml-4 relative">
+            <div className="glass rounded-full p-1 border border-purple-500/30">
+              <UserButton />
+            </div>
           </div>
         </div>
       </div>
