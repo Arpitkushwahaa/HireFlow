@@ -10,10 +10,14 @@ import { inngest, functions } from "./lib/inngest.js";
 
 import chatRoutes from "./routes/chatRoutes.js";
 import sessionRoutes from "./routes/sessionRoute.js";
+import webhookRoutes from "./routes/webhookRoutes.js";
 
 const app = express();
 
 const __dirname = path.resolve();
+
+// Webhook route MUST come before express.json() middleware
+app.use("/api/webhooks", webhookRoutes);
 
 // middleware
 app.use(express.json());
