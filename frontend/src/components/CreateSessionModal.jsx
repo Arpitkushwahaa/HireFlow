@@ -70,34 +70,66 @@ function CreateSessionModal({
           </div>
 
           {/* PROBLEM SELECTION */}
-          <div className="space-y-2">
-            <label className="label">
-              <span className="label-text font-semibold">Select Problem</span>
-              <span className="label-text-alt text-error">*</span>
-            </label>
+          {roomConfig.interviewType && (
+            <div className="space-y-2">
+              <label className="label">
+                <span className="label-text font-semibold">Select Problem/Question</span>
+                <span className="label-text-alt text-error">*</span>
+              </label>
 
-            <select
-              className="select w-full"
-              value={roomConfig.problem}
-              onChange={(e) => {
-                const selectedProblem = problems.find((p) => p.title === e.target.value);
-                setRoomConfig({
-                  difficulty: selectedProblem.difficulty,
-                  problem: e.target.value,
-                });
-              }}
-            >
-              <option value="" disabled>
-                Choose a coding problem...
-              </option>
+              <div className="max-h-96 overflow-y-auto border border-gray-700 rounded-lg p-2">
+                {availableProblems.length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">No problems available</p>
+                ) : (
+                  <div className="space-y-2">
+                    {availableProblems.map((problem) => (
+                      <div
+                        key={problem.id}
+                        onClick={() => {
+                          setRoomConfig({
+                            ...roomConfig,
+                            difficulty: problem.difficulty,
+                            problem: problem.title,
+                          });
+                        }}
+                        className={`p-3 rounded-lg cursor-pointer transition-all hover:bg-gray-800 ${
+                          roomConfig.problem === problem.title ? "bg-primary/20 border border-primary" : "bg-gray-900"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <p className="font-medium">{problem.title}</p>
+                            {problem.topic && (
+                              <p className="text-sm text-gray-400 mt-1">{problem.topic}</p>
+                            )}
+                            {problem.category && problem.category !== problem.topic && (
+                              <p className="text-xs text-gray-500 mt-1">{problem.category}</p>
+                            )}
+                          </div>
+                          <div
+                            className="px-3 py-1 rounded-full text-sm font-medium"
+                            style={{
+                              backgroundColor: getDifficultyColor(problem.difficulty) + "20",
+                              color: getDifficultyColor(problem.difficulty),
+                              border: `1px solid ${getDifficultyColor(problem.difficulty)}`,
+                            }}
+                          >
+                            {problem.difficulty}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-              {problems.map((problem) => (
-                <option key={problem.id} value={problem.title}>
-                  {problem.title} ({problem.difficulty})
-                </option>
-              ))}
-            </select>
-          </div>
+              {availableProblems.length > 0 && (
+                <p className="text-sm text-gray-400 mt-2">
+                  {availableProblems.length} problems available
+                </p>
+              )}
+            </div>
+          )}
 
           {/* ROOM SUMMARY */}
           {roomConfig.problem && roomConfig.interviewType && (
