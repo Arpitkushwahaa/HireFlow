@@ -15994,12 +15994,4 @@ export const PROBLEMS = {
     "cpp": "string decodeString(string s) { return \"\"; }"
   },
   "expectedOutput": { "example": "\"aaabcbc\"" }
-},
-
-"find-all-anagrams-in-a-string": {
-  "id": "find-all-anagrams-in-a-string",
-  "title": "Find All Anagrams in a String",
-  "difficulty": "Medium",
-  "color": "#f39c12",
-  "category": "Sliding Window • String",
-  "interviewType
+}
