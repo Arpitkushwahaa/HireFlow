@@ -3,13 +3,15 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useEndSession, useJoinSession, useSessionById } from "../hooks/useSessions";
 import { PROBLEMS } from "../data/problems";
+import { INTERVIEW_QUESTIONS } from "../data/Interview";
 import { executeCode } from "../lib/piston";
 import Navbar from "../components/Navbar";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { getDifficultyBadgeClass } from "../lib/utils";
-import { Loader2Icon, LogOutIcon, PhoneOffIcon } from "lucide-react";
+import { Loader2Icon, LogOutIcon, PhoneOffIcon, Copy, CheckIcon } from "lucide-react";
 import CodeEditorPanel from "../components/CodeEditorPanel";
 import OutputPanel from "../components/OutputPanel";
+import toast from "react-hot-toast";
 
 import useStreamClient from "../hooks/useStreamClient";
 import { StreamCall, StreamVideo } from "@stream-io/video-react-sdk";
@@ -21,6 +23,9 @@ function SessionPage() {
   const { user } = useUser();
   const [output, setOutput] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [copiedJoinCode, setCopiedJoinCode] = useState(false);
+  const [copiedMeetingLink, setCopiedMeetingLink] = useState(false);
+  const [currentProblem, setCurrentProblem] = useState(null);
 
   const { data: sessionData, isLoading: loadingSession, refetch } = useSessionById(id);
 
@@ -38,10 +43,23 @@ function SessionPage() {
     isParticipant
   );
 
-  // find the problem data based on session problem title
-  const problemData = session?.problem
-    ? Object.values(PROBLEMS).find((p) => p.title === session.problem)
-    : null;
+  // find the problem data based on currentProblem or session problem
+  let problemData = null;
+  const problemToDisplay = currentProblem || session?.problem;
+  
+  if (session?.interviewType && problemToDisplay) {
+    // Get from interview questions
+    const interviewQuestions = INTERVIEW_QUESTIONS[session.interviewType] || [];
+    problemData = interviewQuestions.find((q) => q.title === problemToDisplay);
+  } else if (problemToDisplay) {
+    // Fallback to PROBLEMS for backward compatibility
+    problemData = Object.values(PROBLEMS).find((p) => p.title === problemToDisplay);
+  }
+
+  // Get available questions for the current interview type
+  const availableQuestions = session?.interviewType 
+    ? (INTERVIEW_QUESTIONS[session.interviewType] || [])
+    : [];
 
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const [code, setCode] = useState(problemData?.starterCode?.[selectedLanguage] || "");
@@ -90,9 +108,40 @@ function SessionPage() {
 
   const handleEndSession = () => {
     if (confirm("Are you sure you want to end this session? All participants will be notified.")) {
-      // this will navigate the HOST to dashboard
-      endSessionMutation.mutate(id, { onSuccess: () => navigate("/dashboard") });
+      // End the session and navigate to dashboard
+      endSessionMutation.mutate(id, {
+        onSuccess: () => {
+          navigate("/dashboard");
+        },
+        onError: (error) => {
+          console.error("Error ending session:", error);
+        }
+      });
     }
+  };
+
+  const handleCopyJoinCode = () => {
+    if (session?.joinCode) {
+      navigator.clipboard.writeText(session.joinCode);
+      setCopiedJoinCode(true);
+      toast.success("Join code copied!");
+      setTimeout(() => setCopiedJoinCode(false), 2000);
+    }
+  };
+
+  const handleCopyMeetingLink = () => {
+    const meetingLink = `${window.location.origin}/session/${id}`;
+    navigator.clipboard.writeText(meetingLink);
+    setCopiedMeetingLink(true);
+    toast.success("Meeting link copied!");
+    setTimeout(() => setCopiedMeetingLink(false), 2000);
+  };
+
+  const handleChangeProblem = (e) => {
+    const newProblemTitle = e.target.value;
+    setCurrentProblem(newProblemTitle);
+    setOutput(null);
+    toast.success("Problem changed!");
   };
 
   return (
@@ -109,49 +158,106 @@ function SessionPage() {
                 <div className="h-full overflow-y-auto bg-base-200">
                   {/* HEADER SECTION */}
                   <div className="p-6 bg-base-100 border-b border-base-300">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h1 className="text-3xl font-bold text-base-content">
-                          {session?.problem || "Loading..."}
-                        </h1>
-                        {problemData?.category && (
-                          <p className="text-base-content/60 mt-1">{problemData.category}</p>
+                        <div className="flex items-center justify-between gap-4">
+                          <div>
+                            <h2 className="text-2xl font-bold text-base-content">
+                              {problemData?.title || session?.problem || "Loading..."}
+                            </h2>
+                            <p className="text-base-content/60 mt-2">
+                              Host: {session?.host?.name || "Loading..."} •{" "}
+                              {session?.participant ? 2 : 1}/2 participants
+                            </p>
+                          </div>
+                          {/* Problem Selector - Only for Host */}
+                          {isHost && availableQuestions.length > 0 && (
+                            <div className="form-control">
+                              <label className="label">
+                                <span className="label-text text-xs">Change Question</span>
+                              </label>
+                              <select 
+                                className="select select-bordered select-sm w-64"
+                                value={currentProblem || session?.problem}
+                                onChange={handleChangeProblem}
+                              >
+                                {availableQuestions.map((q) => (
+                                  <option key={q.id} value={q.title}>
+                                    {q.title}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
+                        </div>
+                        {/* Show Meeting Link and Join Code for Host - Only before session starts */}
+                        {isHost && session?.joinCode && !session?.participant && (
+                          <div className="mt-3 space-y-2">
+                            {/* Meeting Link */}
+                            <div className="flex items-center gap-2 bg-secondary/10 px-3 py-2 rounded-lg border border-secondary/20">
+                              <span className="text-sm text-base-content/70">Meeting Link:</span>
+                              <span className="font-mono text-sm text-secondary flex-1 truncate">
+                                {window.location.origin}/session/{id}
+                              </span>
+                              <button
+                                onClick={handleCopyMeetingLink}
+                                className="btn btn-ghost btn-xs"
+                                title="Copy meeting link"
+                              >
+                                {copiedMeetingLink ? (
+                                  <CheckIcon className="w-4 h-4 text-success" />
+                                ) : (
+                                  <Copy className="w-4 h-4" />
+                                )}
+                              </button>
+                            </div>
+                            {/* Join Code */}
+                            <div className="flex items-center gap-2 bg-primary/10 px-3 py-2 rounded-lg border border-primary/20">
+                              <span className="text-sm text-base-content/70">Or Join Code:</span>
+                              <span className="font-mono font-bold text-lg text-primary tracking-wider">
+                                {session.joinCode}
+                              </span>
+                              <button
+                                onClick={handleCopyJoinCode}
+                                className="btn btn-ghost btn-xs"
+                                title="Copy join code"
+                              >
+                                {copiedJoinCode ? (
+                                  <CheckIcon className="w-4 h-4 text-success" />
+                                ) : (
+                                  <Copy className="w-4 h-4" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
                         )}
-                        <p className="text-base-content/60 mt-2">
-                          Host: {session?.host?.name || "Loading..."} •{" "}
-                          {session?.participant ? 2 : 1}/2 participants
-                        </p>
-                      </div>
 
-                      <div className="flex items-center gap-3">
-                        <span
-                          className={`badge badge-lg ${getDifficultyBadgeClass(
-                            session?.difficulty
-                          )}`}
-                        >
-                          {session?.difficulty.slice(0, 1).toUpperCase() +
-                            session?.difficulty.slice(1) || "Easy"}
-                        </span>
-                        {isHost && session?.status === "active" && (
-                          <button
-                            onClick={handleEndSession}
-                            disabled={endSessionMutation.isPending}
-                            className="btn btn-error btn-sm gap-2"
+                        <div className="flex items-center gap-3 mt-4">
+                          <span
+                            className={`badge badge-lg ${getDifficultyBadgeClass(
+                              session?.difficulty
+                            )}`}
                           >
-                            {endSessionMutation.isPending ? (
-                              <Loader2Icon className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <LogOutIcon className="w-4 h-4" />
-                            )}
-                            End Session
-                          </button>
-                        )}
-                        {session?.status === "completed" && (
-                          <span className="badge badge-ghost badge-lg">Completed</span>
-                        )}
+                            {session?.difficulty.slice(0, 1).toUpperCase() +
+                              session?.difficulty.slice(1) || "Easy"}
+                          </span>
+                          {isHost && session?.status === "active" && (
+                            <button
+                              onClick={handleEndSession}
+                              disabled={endSessionMutation.isPending}
+                              className="btn btn-error btn-sm gap-2"
+                            >
+                              {endSessionMutation.isPending ? (
+                                <Loader2Icon className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <LogOutIcon className="w-4 h-4" />
+                              )}
+                              End Session
+                            </button>
+                          )}
+                          {session?.status === "completed" && (
+                            <span className="badge badge-ghost badge-lg">Completed</span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </div>
 
                   <div className="p-6 space-y-6">
                     {/* problem desc */}
