@@ -13,9 +13,20 @@ export async function createSession(req, res) {
 
     // generate a unique call id for stream video
     const callId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+    
+    // generate unique 6-digit join code
+    const joinCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    // Ensure user exists in Stream
+    await chatClient.upsertUser({
+      id: clerkId,
+      name: req.user.name,
+      image: req.user.profileImage,
+      role: 'user',
+    });
 
     // create session in db
-    const session = await Session.create({ problem, difficulty, interviewType, host: userId, callId });
+    const session = await Session.create({ problem, difficulty, interviewType, host: userId, callId, joinCode });
 
     // create stream video call
     await streamClient.video.call("default", callId).getOrCreate({
@@ -37,21 +48,58 @@ export async function createSession(req, res) {
     res.status(201).json({ session });
   } catch (error) {
     console.log("Error in createSession controller:", error.message);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error("Full error:", error);
+    res.status(500).json({ message: error.message || "Internal Server Error" });
   }
 }
 
-export async function getActiveSessions(_, res) {
-  try {
-    const sessions = await Session.find({ status: "active" })
-      .populate("host", "name profileImage email clerkId")
-      .populate("participant", "name profileImage email clerkId")
-      .sort({ createdAt: -1 })
-      .limit(20);
+// Removed getActiveSessions for privacy - use join code instead
 
-    res.status(200).json({ sessions });
+export async function joinSessionByCode(req, res) {
+  try {
+    const { joinCode } = req.body;
+    const userId = req.user._id;
+    const clerkId = req.user.clerkId;
+
+    if (!joinCode) {
+      return res.status(400).json({ message: "Join code is required" });
+    }
+
+    const session = await Session.findOne({ joinCode: joinCode.toUpperCase(), status: "active" });
+
+    if (!session) {
+      return res.status(404).json({ message: "Invalid join code or session has ended" });
+    }
+
+    if (session.host.toString() === userId.toString()) {
+      return res.status(400).json({ message: "You are the host of this session" });
+    }
+
+    if (session.participant) {
+      return res.status(409).json({ message: "Session already has a participant" });
+    }
+
+    // Ensure participant user exists in Stream
+    await chatClient.upsertUser({
+      id: clerkId,
+      name: req.user.name,
+      image: req.user.profileImage,
+      role: 'user',
+    });
+
+    session.participant = userId;
+    await session.save();
+
+    // Add user to chat channel
+    const channel = chatClient.channel("messaging", session.callId);
+    await channel.addMembers([clerkId]);
+
+    await session.populate("host", "name profileImage email clerkId");
+    await session.populate("participant", "name profileImage email clerkId");
+
+    res.status(200).json({ session });
   } catch (error) {
-    console.log("Error in getActiveSessions controller:", error.message);
+    console.log("Error in joinSessionByCode controller:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
@@ -60,11 +108,12 @@ export async function getMyRecentSessions(req, res) {
   try {
     const userId = req.user._id;
 
-    // get sessions where user is either host or participant
+    // get sessions where user is either host or participant (both active and completed)
     const sessions = await Session.find({
-      status: "completed",
       $or: [{ host: userId }, { participant: userId }],
     })
+      .select('problem difficulty interviewType status createdAt updatedAt participant host') // Only select needed fields
+      .lean() // Convert to plain JavaScript objects for better performance
       .sort({ createdAt: -1 })
       .limit(20);
 
@@ -112,6 +161,14 @@ export async function joinSession(req, res) {
 
     // check if session is already full - has a participant
     if (session.participant) return res.status(409).json({ message: "Session is full" });
+
+    // Ensure participant user exists in Stream
+    await chatClient.upsertUser({
+      id: clerkId,
+      name: req.user.name,
+      image: req.user.profileImage,
+      role: 'user',
+    });
 
     session.participant = userId;
     await session.save();
