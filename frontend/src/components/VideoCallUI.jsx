@@ -82,12 +82,12 @@ function VideoCallUI({ chatClient, channel }) {
                   <XIcon className="size-5" />
                 </button>
               </div>
-              <div className="flex-1 overflow-hidden stream-chat-dark">
+              <div className="flex-1 overflow-hidden">
                 <Chat client={chatClient} theme="str-chat__theme-dark">
                   <Channel channel={channel}>
                     <Window>
                       <MessageList />
-                      <MessageInput />
+                      <MessageInput focus />
                     </Window>
                     <Thread />
                   </Channel>
