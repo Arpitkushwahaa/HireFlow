@@ -12,7 +12,16 @@ function App() {
   const { isSignedIn, isLoaded } = useUser();
 
   // this will get rid of the flickering effect
-  if (!isLoaded) return null;
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-black">
+        <div className="text-center">
+          <div className="loading loading-spinner loading-lg text-primary"></div>
+          <p className="mt-4 text-white">Loading HireFlow...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
