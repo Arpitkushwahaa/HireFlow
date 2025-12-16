@@ -36,6 +36,16 @@ const sessionSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    // unique 6-digit join code for privacy
+    joinCode: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    isPrivate: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true }
 );
