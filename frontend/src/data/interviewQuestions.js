@@ -681,6 +681,51 @@ export const PRODUCT_ENGINEER_QUESTIONS = [
   }
 ];
 
+export const DSA_QUESTIONS = [
+  { id: "two-sum", title: "Two Sum", difficulty: "Easy", category: "Array", topic: "Hash Table", interviewType: "DSA" },
+  { id: "reverse-string", title: "Reverse String", difficulty: "Easy", category: "String", topic: "Two Pointers", interviewType: "DSA" },
+  { id: "valid-palindrome", title: "Valid Palindrome", difficulty: "Easy", category: "String", topic: "Two Pointers", interviewType: "DSA" },
+  { id: "maximum-subarray", title: "Maximum Subarray", difficulty: "Medium", category: "Array", topic: "Dynamic Programming", interviewType: "DSA" },
+  { id: "container-with-most-water", title: "Container With Most Water", difficulty: "Medium", category: "Array", topic: "Two Pointers", interviewType: "DSA" },
+  { id: "best-time-to-buy-sell-stock", title: "Best Time to Buy and Sell Stock", difficulty: "Easy", category: "Array", topic: "Dynamic Programming", interviewType: "DSA" },
+  { id: "contains-duplicate", title: "Contains Duplicate", difficulty: "Easy", category: "Array", topic: "Hash Table", interviewType: "DSA" },
+  { id: "product-of-array-except-self", title: "Product of Array Except Self", difficulty: "Medium", category: "Array", topic: "Prefix Sum", interviewType: "DSA" },
+  { id: "3sum", title: "3Sum", difficulty: "Medium", category: "Array", topic: "Two Pointers", interviewType: "DSA" },
+  { id: "merge-intervals", title: "Merge Intervals", difficulty: "Medium", category: "Array", topic: "Sorting + Intervals", interviewType: "DSA" },
+  { id: "valid-anagram", title: "Valid Anagram", difficulty: "Easy", category: "String", topic: "Hash Table", interviewType: "DSA" },
+  { id: "group-anagrams", title: "Group Anagrams", difficulty: "Medium", category: "String", topic: "Hash Table", interviewType: "DSA" },
+  { id: "longest-substring-without-repeating", title: "Longest Substring Without Repeating Characters", difficulty: "Medium", category: "String", topic: "Sliding Window", interviewType: "DSA" },
+  { id: "valid-parentheses", title: "Valid Parentheses", difficulty: "Easy", category: "Stack", topic: "String Processing", interviewType: "DSA" },
+  { id: "reverse-linked-list", title: "Reverse Linked List", difficulty: "Easy", category: "Linked List", topic: "Pointers", interviewType: "DSA" },
+  { id: "merge-two-sorted-lists", title: "Merge Two Sorted Lists", difficulty: "Easy", category: "Linked List", topic: "Two Pointers", interviewType: "DSA" },
+  { id: "climbing-stairs", title: "Climbing Stairs", difficulty: "Easy", category: "Dynamic Programming", topic: "Fibonacci Pattern", interviewType: "DSA" },
+  { id: "binary-search", title: "Binary Search", difficulty: "Easy", category: "Binary Search", topic: "Divide and Conquer", interviewType: "DSA" },
+  { id: "coin-change", title: "Coin Change", difficulty: "Medium", category: "Dynamic Programming", topic: "Unbounded Knapsack", interviewType: "DSA" },
+  { id: "longest-common-subsequence", title: "Longest Common Subsequence", difficulty: "Medium", category: "Dynamic Programming", topic: "2D DP", interviewType: "DSA" },
+  { id: "number-of-islands", title: "Number of Islands", difficulty: "Medium", category: "Graph", topic: "DFS/BFS", interviewType: "DSA" },
+  { id: "course-schedule", title: "Course Schedule", difficulty: "Medium", category: "Graph", topic: "Topological Sort", interviewType: "DSA" },
+  { id: "trapping-rain-water", title: "Trapping Rain Water", difficulty: "Hard", category: "Array", topic: "Two Pointers", interviewType: "DSA" },
+  { id: "word-search", title: "Word Search", difficulty: "Medium", category: "Backtracking", topic: "DFS", interviewType: "DSA" },
+  { id: "lru-cache", title: "LRU Cache", difficulty: "Hard", category: "Design", topic: "Hash Map + Doubly Linked List", interviewType: "DSA" },
+  { id: "median-of-two-sorted-arrays", title: "Median of Two Sorted Arrays", difficulty: "Hard", category: "Binary Search", topic: "Divide and Conquer", interviewType: "DSA" },
+  { id: "find-first-and-last-position", title: "Find First and Last Position of Element in Sorted Array", difficulty: "Medium", category: "Binary Search", topic: "Modified Binary Search", interviewType: "DSA" },
+  { id: "search-in-rotated-sorted-array", title: "Search in Rotated Sorted Array", difficulty: "Medium", category: "Binary Search", topic: "Modified Binary Search", interviewType: "DSA" },
+  { id: "linked-list-cycle", title: "Linked List Cycle", difficulty: "Easy", category: "Linked List", topic: "Floyd's Algorithm", interviewType: "DSA" },
+  { id: "remove-nth-node-from-end", title: "Remove Nth Node From End of List", difficulty: "Medium", category: "Linked List", topic: "Two Pointers", interviewType: "DSA" },
+  { id: "add-two-numbers", title: "Add Two Numbers", difficulty: "Medium", category: "Linked List", topic: "Math + Carry", interviewType: "DSA" },
+  { id: "palindrome-linked-list", title: "Palindrome Linked List", difficulty: "Easy", category: "Linked List", topic: "Two Pointers", interviewType: "DSA" },
+  { id: "invert-binary-tree", title: "Invert Binary Tree", difficulty: "Easy", category: "Tree", topic: "DFS/BFS", interviewType: "DSA" },
+  { id: "maximum-depth-binary-tree", title: "Maximum Depth of Binary Tree", difficulty: "Easy", category: "Tree", topic: "DFS/BFS", interviewType: "DSA" },
+  { id: "same-tree", title: "Same Tree", difficulty: "Easy", category: "Tree", topic: "DFS", interviewType: "DSA" },
+  { id: "subtree-of-another-tree", title: "Subtree of Another Tree", difficulty: "Easy", category: "Tree", topic: "DFS", interviewType: "DSA" },
+  { id: "lowest-common-ancestor-bst", title: "Lowest Common Ancestor of a Binary Search Tree", difficulty: "Easy", category: "Tree", topic: "BST Properties", interviewType: "DSA" },
+  { id: "binary-tree-level-order-traversal", title: "Binary Tree Level Order Traversal", difficulty: "Medium", category: "Tree", topic: "BFS", interviewType: "DSA" },
+  { id: "validate-binary-search-tree", title: "Validate Binary Search Tree", difficulty: "Medium", category: "Tree", topic: "DFS + BST", interviewType: "DSA" },
+  { id: "kth-smallest-element-bst", title: "Kth Smallest Element in a BST", difficulty: "Medium", category: "Tree", topic: "Inorder Traversal", interviewType: "DSA" },
+  { id: "construct-binary-tree-preorder-inorder", title: "Construct Binary Tree from Preorder and Inorder Traversal", difficulty: "Medium", category: "Tree", topic: "Tree Construction", interviewType: "DSA" },
+  { id: "binary-tree-maximum-path-sum", title: "Binary Tree Maximum Path Sum", difficulty: "Hard", category: "Tree", topic: "DFS + Recursion", interviewType: "DSA" }
+];
+
 export const SYSTEM_DESIGN_QUESTIONS = [
   {
     id: "sd-1",
@@ -891,6 +936,7 @@ export const INTERVIEW_QUESTIONS = {
   "Backend": BACKEND_QUESTIONS,
   "Frontend": FRONTEND_QUESTIONS,
   "Product Engineer": PRODUCT_ENGINEER_QUESTIONS,
+  "DSA": DSA_QUESTIONS,
   "System Design": SYSTEM_DESIGN_QUESTIONS
 };
 
