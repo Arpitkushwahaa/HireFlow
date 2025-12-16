@@ -10,20 +10,21 @@ import { inngest, functions } from "./lib/inngest.js";
 
 import chatRoutes from "./routes/chatRoutes.js";
 import sessionRoutes from "./routes/sessionRoute.js";
-import webhookRoutes from "./routes/webhookRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 
 const __dirname = path.resolve();
-
-// Webhook route MUST come before express.json() middleware
-app.use("/api/webhooks", webhookRoutes);
 
 // middleware
 app.use(express.json());
 // credentials:true meaning?? => server allows a browser to include cookies on request
 app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 app.use(clerkMiddleware()); // this adds auth field to request object: req.auth()
+
+// Auth routes (webhook needs raw body, but sync needs json)
+app.post("/api/auth/webhook", express.raw({ type: "application/json" }), authRoutes);
+app.use("/api/auth", authRoutes);
 
 app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/chat", chatRoutes);
