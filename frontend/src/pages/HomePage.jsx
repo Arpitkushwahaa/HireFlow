@@ -7,263 +7,176 @@ import {
   UsersIcon,
   VideoIcon,
   ZapIcon,
-  RocketIcon,
-  ShieldCheckIcon,
-  TrendingUpIcon,
-  StarIcon,
 } from "lucide-react";
 import { SignInButton } from "@clerk/clerk-react";
 
 function HomePage() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-float" style={{animationDelay: '2s'}}></div>
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-pink-500/10 rounded-full blur-3xl animate-float" style={{animationDelay: '4s'}}></div>
-      </div>
-
+    <div className="bg-gradient-to-br from-base-100 via-base-200 to-base-300">
       {/* NAVBAR */}
-      <nav className="glass-strong sticky top-0 z-50 border-b border-purple-500/10">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <nav className="bg-base-100/80 backdrop-blur-md border-b border-primary/20 sticky top-0 z-50 shadow-lg">
+        <div className="max-w-7xl mx-auto p-4 flex items-center justify-between">
           {/* LOGO */}
           <Link
             to={"/"}
-            className="flex items-center gap-3 hover:scale-105 transition-all duration-300 group"
+            className="flex items-center gap-3 hover:scale-105 transition-transform duration-200"
           >
-            <div className="size-12 rounded-2xl bg-gradient-to-br from-purple-700 via-purple-800 to-indigo-800 flex items-center justify-center shadow-lg">
-              <SparklesIcon className="size-7 text-purple-300" />
+            <div className="size-10 rounded-xl bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center shadow-lg">
+              <SparklesIcon className="size-6 text-white" />
             </div>
 
             <div className="flex flex-col">
-              <span className="font-black text-2xl bg-gradient-to-r from-purple-300 via-purple-400 to-indigo-400 bg-clip-text text-transparent tracking-wider">
+              <span className="font-black text-xl bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent font-mono tracking-wider">
                 HireFlow
               </span>
-              <span className="text-xs text-gray-400 font-medium -mt-1">Code • Connect • Conquer</span>
+              <span className="text-xs text-base-content/60 font-medium -mt-1">Code Together</span>
             </div>
           </Link>
 
           {/* AUTH BTN */}
           <SignInButton mode="modal">
-            <button className="group relative px-8 py-3 bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-800 rounded-2xl text-gray-200 font-bold text-sm shadow-lg hover:shadow-purple-900/30 transition-all duration-300 hover:scale-105 flex items-center gap-2 overflow-hidden">
-              <span className="relative z-10">Launch App</span>
-              <ArrowRightIcon className="size-4 relative z-10 group-hover:translate-x-1 transition-transform" />
-              <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            <button className="group relative px-8 py-3.5 bg-gradient-to-r from-primary via-secondary to-accent rounded-xl text-white font-bold text-sm shadow-xl hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300 hover:scale-110 flex items-center gap-2 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-accent via-secondary to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <span className="relative z-10">Get Started</span>
+              <ArrowRightIcon className="size-4 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
             </button>
           </SignInButton>
         </div>
       </nav>
 
       {/* HERO SECTION */}
-      <div className="relative max-w-7xl mx-auto px-4 py-20 lg:py-32">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+      <div className="max-w-7xl mx-auto px-4 py-20">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* LEFT CONTENT */}
-          <div className="space-y-8 animate-slide-up">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong border border-purple-500/20">
-              <ZapIcon className="size-4 text-yellow-600" />
-              <span className="text-sm font-semibold text-gray-300">Real-time Collaboration</span>
-              <span className="px-2 py-0.5 rounded-full bg-purple-800 text-xs text-gray-300">Live</span>
+          <div className="space-y-8">
+            <div className="badge badge-primary badge-lg gap-2 hover:scale-110 transition-all duration-300 hover:shadow-lg hover:shadow-primary/50 cursor-default animate-pulse">
+              <ZapIcon className="size-4" />
+              Real-time Collaboration
             </div>
 
-            <h1 className="text-6xl lg:text-8xl font-black leading-tight">
-              <span className="block bg-gradient-to-r from-purple-300 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
-                Code Together
+            <h1 className="text-5xl lg:text-7xl font-black leading-tight">
+              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+                Code Together,
               </span>
-              <span className="block text-gray-200 mt-2">
-                Interview Better
-              </span>
+              <br />
+              <span className="text-base-content hover:text-primary transition-colors duration-300 cursor-default">Learn Together</span>
             </h1>
 
-            <p className="text-xl text-gray-400 leading-relaxed max-w-xl">
-              Experience the future of technical interviews with <span className="text-purple-400 font-bold">real-time video</span>, 
-              <span className="text-indigo-400 font-bold"> collaborative coding</span>, and 
-              <span className="text-purple-500 font-bold"> instant execution</span>. Built for developers, by developers.
+            <p className="text-xl text-base-content/70 leading-relaxed max-w-xl">
+              The ultimate platform for collaborative coding interviews and pair programming.
+              Connect face-to-face, code in real-time, and ace your technical interviews.
             </p>
 
             {/* FEATURE PILLS */}
             <div className="flex flex-wrap gap-3">
-              {[
-                { icon: CheckIcon, text: '4K Video Quality', color: 'from-green-500 to-emerald-500' },
-                { icon: CheckIcon, text: 'VSCode Editor', color: 'from-blue-500 to-cyan-500' },
-                { icon: CheckIcon, text: '50+ Languages', color: 'from-purple-500 to-pink-500' },
-              ].map((feature, idx) => (
-                <div key={idx} className={`glass px-4 py-2 rounded-full border border-white/20 flex items-center gap-2 hover:scale-105 transition-all duration-300`}>
-                  <feature.icon className={`size-4 bg-gradient-to-r ${feature.color} bg-clip-text text-transparent`} />
-                  <span className="text-sm font-medium text-white">{feature.text}</span>
-                </div>
-              ))}
+              <div className="badge badge-lg badge-outline hover:badge-success hover:scale-110 transition-all duration-300 cursor-default hover:shadow-lg">
+                <CheckIcon className="size-4 text-success" />
+                Live Video Chat
+              </div>
+              <div className="badge badge-lg badge-outline hover:badge-success hover:scale-110 transition-all duration-300 cursor-default hover:shadow-lg">
+                <CheckIcon className="size-4 text-success" />
+                Code Editor
+              </div>
+              <div className="badge badge-lg badge-outline hover:badge-success hover:scale-110 transition-all duration-300 cursor-default hover:shadow-lg">
+                <CheckIcon className="size-4 text-success" />
+                Multi-Language
+              </div>
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4 pt-4">
+            <div className="flex flex-wrap gap-4">
               <SignInButton mode="modal">
-                <button className="group relative px-10 py-5 bg-gradient-to-r from-purple-700 via-purple-800 to-indigo-800 rounded-2xl text-gray-200 font-bold text-lg shadow-lg hover:shadow-purple-900/30 transition-all duration-300 hover:scale-105 flex items-center gap-3 overflow-hidden">
-                  <RocketIcon className="size-6 relative z-10" />
-                  <span className="relative z-10">Start Free Trial</span>
-                  <ArrowRightIcon className="size-5 relative z-10 group-hover:translate-x-1 transition-transform" />
+                <button className="group btn btn-primary btn-lg hover:scale-110 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-primary/50 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-accent to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <span className="relative z-10">Start Coding Now</span>
+                  <ArrowRightIcon className="size-5 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
                 </button>
               </SignInButton>
 
-              <button className="group px-10 py-5 glass-strong rounded-2xl text-gray-300 font-bold text-lg border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300 hover:scale-105 flex items-center gap-3">
-                <VideoIcon className="size-6" />
-                <span>Watch Demo</span>
-              </button>
+              
             </div>
 
             {/* STATS */}
-            <div className="grid grid-cols-3 gap-6 pt-8">
-              {[
-                { value: '50K+', label: 'Active Users', icon: UsersIcon },
-                { value: '1M+', label: 'Interviews', icon: TrendingUpIcon },
-                { value: '99.9%', label: 'Uptime', icon: ShieldCheckIcon },
-              ].map((stat, idx) => (
-                <div key={idx} className="glass-strong rounded-2xl p-4 text-center hover:scale-105 transition-all duration-300 border border-purple-500/10 card-3d">
-                  <stat.icon className="size-6 mx-auto mb-2 text-purple-500" />
-                  <div className="text-3xl font-black bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">{stat.value}</div>
-                  <div className="text-sm text-gray-400 font-medium">{stat.label}</div>
-                </div>
-              ))}
+            <div className="stats stats-vertical lg:stats-horizontal bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300">
+              <div className="stat hover:bg-primary/10 transition-colors duration-300 cursor-default group">
+                <div className="stat-value text-primary group-hover:scale-110 transition-transform duration-300">10K+</div>
+                <div className="stat-title">Active Users</div>
+              </div>
+              <div className="stat hover:bg-secondary/10 transition-colors duration-300 cursor-default group">
+                <div className="stat-value text-secondary group-hover:scale-110 transition-transform duration-300">50K+</div>
+                <div className="stat-title">Sessions</div>
+              </div>
+              <div className="stat hover:bg-accent/10 transition-colors duration-300 cursor-default group">
+                <div className="stat-value text-accent group-hover:scale-110 transition-transform duration-300">99.9%</div>
+                <div className="stat-title">Uptime</div>
+              </div>
             </div>
           </div>
 
-          {/* RIGHT IMAGE/MOCKUP */}
-          <div className="relative animate-slide-up" style={{animationDelay: '0.2s'}}>
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-purple-500/20 hover:border-purple-500/30 transition-all duration-500 card-3d">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-indigo-900/20"></div>
-              <img
-                src="/hero.png"
-                alt="HireFlow Platform"
-                className="w-full h-auto relative z-10"
-              />
-              {/* Floating badges */}
-              <div className="absolute top-6 right-6 glass-strong px-4 py-2 rounded-full border border-green-700/30 flex items-center gap-2 animate-float">
-                <div className="size-2 bg-green-600 rounded-full animate-pulse"></div>
-                <span className="text-sm font-bold text-gray-300">Live Session</span>
-              </div>
-            </div>
-            
-            {/* Decorative elements */}
-            <div className="absolute -top-6 -right-6 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl"></div>
-            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
+          {/* RIGHT IMAGE */}
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 via-secondary/30 to-accent/30 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500 opacity-50 group-hover:opacity-100" />
+            <img
+              src="/hero.png"
+              alt="CodeCollab Platform"
+              className="relative w-full h-auto rounded-3xl shadow-2xl border-4 border-base-100 group-hover:scale-105 group-hover:rotate-1 transition-all duration-500"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
         </div>
       </div>
 
       {/* FEATURES SECTION */}
-      <div className="relative max-w-7xl mx-auto px-4 py-20">
-        <div className="text-center mb-20 animate-slide-up">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-strong border border-purple-500/20 mb-6">
-            <StarIcon className="size-4 text-yellow-600" />
-            <span className="text-sm font-semibold text-gray-300">Powerful Features</span>
-          </div>
-          <h2 className="text-5xl lg:text-6xl font-black mb-6">
-            <span className="text-gray-200">Everything You Need to </span>
-            <span className="bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">Ace Interviews</span>
+      <div className="max-w-7xl mx-auto px-4 py-20">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4 hover:scale-105 transition-transform duration-300 cursor-default">
+            Everything You Need to <span className="text-primary font-mono bg-primary/10 px-3 py-1 rounded-lg">Succeed</span>
           </h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Professional tools and features designed to make your coding interviews seamless, productive, and enjoyable
+          <p className="text-lg text-base-content/70 max-w-2xl mx-auto">
+            Powerful features designed to make your coding interviews seamless and productive
           </p>
         </div>
 
         {/* FEATURES GRID */}
         <div className="grid md:grid-cols-3 gap-8">
-          {[
-            {
-              icon: VideoIcon,
-              title: 'HD Video Calling',
-              description: 'Crystal clear 4K video and audio for seamless face-to-face communication during interviews',
-              gradient: 'from-pink-500 to-rose-500',
-              delay: '0s'
-            },
-            {
-              icon: Code2Icon,
-              title: 'Live Code Editor',
-              description: 'VSCode-powered editor with real-time collaboration, syntax highlighting, and 50+ languages',
-              gradient: 'from-blue-500 to-cyan-500',
-              delay: '0.1s'
-            },
-            {
-              icon: UsersIcon,
-              title: 'Real-time Sync',
-              description: 'Share screen, discuss solutions, and collaborate in real-time with instant updates',
-              gradient: 'from-purple-500 to-indigo-500',
-              delay: '0.2s'
-            },
-            {
-              icon: ZapIcon,
-              title: 'Instant Execution',
-              description: 'Run code instantly in a secure sandbox environment with immediate results and feedback',
-              gradient: 'from-yellow-500 to-orange-500',
-              delay: '0.3s'
-            },
-            {
-              icon: ShieldCheckIcon,
-              title: 'Enterprise Security',
-              description: 'Bank-level encryption and security protocols to keep your interviews private and secure',
-              gradient: 'from-green-500 to-emerald-500',
-              delay: '0.4s'
-            },
-            {
-              icon: TrendingUpIcon,
-              title: 'Analytics Dashboard',
-              description: 'Track performance, view session history, and get insights to improve your interview skills',
-              gradient: 'from-violet-500 to-purple-500',
-              delay: '0.5s'
-            },
-          ].map((feature, idx) => (
-            <div 
-              key={idx} 
-              className="gradient-border card-3d hover:scale-105 transition-all duration-500 animate-slide-up"
-              style={{animationDelay: feature.delay}}
-            >
-              <div className="gradient-border-inner h-full">
-                <div className={`size-16 bg-gradient-to-br ${feature.gradient} opacity-80 rounded-2xl flex items-center justify-center mb-6 shadow-md`}>
-                  <feature.icon className="size-8 text-gray-200" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-200 mb-3">{feature.title}</h3>
-                <p className="text-gray-400 leading-relaxed">{feature.description}</p>
+          {/* Feature 1 */}
+          <div className="group card bg-base-100 shadow-xl hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-2 border border-transparent hover:border-primary/50">
+            <div className="card-body items-center text-center">
+              <div className="size-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg group-hover:shadow-primary/50">
+                <VideoIcon className="size-8 text-primary group-hover:text-white transition-colors duration-300" />
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* TESTIMONIALS / SOCIAL PROOF */}
-      <div className="relative max-w-7xl mx-auto px-4 py-20">
-        <div className="glass-strong rounded-3xl p-12 border border-purple-500/20 text-center">
-          <p className="text-3xl font-bold text-gray-200 mb-8">
-            "HireFlow transformed our interview process. <span className="text-purple-500">Absolutely game-changing!</span>"
-          </p>
-          <div className="flex items-center justify-center gap-4">
-            <div className="size-12 rounded-full bg-gradient-to-br from-purple-700 to-indigo-700"></div>
-            <div className="text-left">
-              <p className="text-gray-200 font-bold">Tech Leaders Worldwide</p>
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <StarIcon key={i} className="size-4 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
+              <h3 className="card-title group-hover:text-primary transition-colors duration-300">HD Video Call</h3>
+              <p className="text-base-content/70 group-hover:text-base-content transition-colors duration-300">
+                Crystal clear video and audio for seamless communication during interviews
+              </p>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* CTA SECTION */}
-      <div className="relative max-w-7xl mx-auto px-4 py-20 mb-20">
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-purple-900 via-purple-800 to-indigo-900 p-12 text-center">
-          <div className="relative z-10">
-            <h2 className="text-5xl font-black text-gray-200 mb-6">Ready to Transform Your Interviews?</h2>
-            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              Join thousands of developers and companies already using HireFlow
-            </p>
-            <SignInButton mode="modal">
-              <button className="px-12 py-6 bg-gray-900 text-purple-300 rounded-2xl font-black text-xl shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-3 mx-auto">
-                <RocketIcon className="size-7" />
-                Get Started for Free
-                <ArrowRightIcon className="size-6" />
-              </button>
-            </SignInButton>
+          {/* Feature 2 */}
+          <div className="group card bg-base-100 shadow-xl hover:shadow-2xl hover:shadow-secondary/20 transition-all duration-300 hover:-translate-y-2 border border-transparent hover:border-secondary/50">
+            <div className="card-body items-center text-center">
+              <div className="size-16 bg-secondary/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-secondary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg group-hover:shadow-secondary/50">
+                <Code2Icon className="size-8 text-secondary group-hover:text-white transition-colors duration-300" />
+              </div>
+              <h3 className="card-title group-hover:text-secondary transition-colors duration-300">Live Code Editor</h3>
+              <p className="text-base-content/70 group-hover:text-base-content transition-colors duration-300">
+                Collaborate in real-time with syntax highlighting and multiple language support
+              </p>
+            </div>
+          </div>
+
+          {/* Feature 3 */}
+          <div className="group card bg-base-100 shadow-xl hover:shadow-2xl hover:shadow-accent/20 transition-all duration-300 hover:-translate-y-2 border border-transparent hover:border-accent/50">
+            <div className="card-body items-center text-center">
+              <div className="size-16 bg-accent/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-accent group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg group-hover:shadow-accent/50">
+                <UsersIcon className="size-8 text-accent group-hover:text-white transition-colors duration-300" />
+              </div>
+              <h3 className="card-title group-hover:text-accent transition-colors duration-300">Easy Collaboration</h3>
+              <p className="text-base-content/70 group-hover:text-base-content transition-colors duration-300">
+                Share your screen, discuss solutions, and learn from each other in real-time
+              </p>
+            </div>
           </div>
         </div>
       </div>
