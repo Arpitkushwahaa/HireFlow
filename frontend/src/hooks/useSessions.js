@@ -17,6 +17,10 @@ export const useActiveSessions = () => {
   const result = useQuery({
     queryKey: ["activeSessions"],
     queryFn: sessionApi.getActiveSessions,
+    staleTime: 10000, // Consider data fresh for 10 seconds
+    gcTime: 3 * 60 * 1000, // Keep in cache for 3 minutes
+    refetchOnWindowFocus: true, // Refetch on focus for active sessions
+    refetchInterval: 30000, // Refetch every 30 seconds for active sessions
   });
 
   return result;
@@ -26,6 +30,10 @@ export const useMyRecentSessions = () => {
   const result = useQuery({
     queryKey: ["myRecentSessions"],
     queryFn: sessionApi.getMyRecentSessions,
+    staleTime: 30000, // Consider data fresh for 30 seconds
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+    refetchOnWindowFocus: false, // Don't refetch on window focus for better performance
+    refetchOnMount: false, // Use cached data on mount
   });
 
   return result;
