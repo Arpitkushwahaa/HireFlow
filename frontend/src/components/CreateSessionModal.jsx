@@ -1,6 +1,6 @@
 import { Code2Icon, LoaderIcon, PlusIcon } from "lucide-react";
 import { PROBLEMS } from "../data/problems";
-import { INTERVIEW_QUESTIONS } from "../data/Interview";
+import { INTERVIEW_QUESTIONS } from "../data/interviewQuestions";
 
 function CreateSessionModal({
   isOpen,
