@@ -15,15 +15,29 @@ function SessionCreatedModal({ session, onClose }) {
   const handleCopyCode = () => {
     navigator.clipboard.writeText(session.joinCode);
     setCopiedCode(true);
-    toast.success("Join code copied!");
+    toast.success("Join code copied to clipboard!");
     setTimeout(() => setCopiedCode(false), 2000);
   };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(meetingLink);
     setCopiedLink(true);
-    toast.success("Meeting link copied!");
+    toast.success("Meeting link copied to clipboard!");
     setTimeout(() => setCopiedLink(false), 2000);
+  };
+
+  const handleShareViaEmail = () => {
+    const subject = encodeURIComponent(`Join Interview Session - ${session.problem}`);
+    const body = encodeURIComponent(
+      `You're invited to join an interview session!\n\n` +
+      `Problem: ${session.problem}\n` +
+      `Difficulty: ${session.difficulty}\n` +
+      `Interview Type: ${session.interviewType}\n\n` +
+      `Meeting Link: ${meetingLink}\n\n` +
+      `Or use Join Code: ${session.joinCode}\n\n` +
+      `Click the link above or go to ${window.location.origin} and enter the join code.`
+    );
+    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
   };
 
   const handleJoinSession = () => {
@@ -110,17 +124,39 @@ function SessionCreatedModal({ session, onClose }) {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-3">
-            <button className="btn btn-ghost flex-1" onClick={onClose}>
-              Close
-            </button>
+          <div className="space-y-3">
             <button 
-              className="btn btn-primary flex-1" 
-              onClick={handleJoinSession}
+              className="btn btn-accent btn-sm w-full" 
+              onClick={handleShareViaEmail}
             >
-              <VideoIcon className="w-5 h-5" />
-              Start Interview
+              📧 Share via Email
             </button>
+            
+            <div className="flex gap-3">
+              <button className="btn btn-ghost flex-1" onClick={onClose}>
+                Close
+              </button>
+              <button 
+                className="btn btn-primary flex-1" 
+                onClick={handleJoinSession}
+              >
+                <VideoIcon className="w-5 h-5" />
+                Start Interview
+              </button>
+            </div>
+          </div>
+
+          {/* Instructions */}
+          <div className="alert alert-info">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div className="text-xs">
+              <p className="font-semibold">How candidates can join:</p>
+              <ol className="list-decimal list-inside mt-1 space-y-1">
+                <li>Click the meeting link (works directly)</li>
+                <li>OR use "Join Session" button with the code</li>
+                <li>Can join from any device with any email</li>
+              </ol>
+            </div>
           </div>
         </div>
       </div>
