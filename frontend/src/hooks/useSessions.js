@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { sessionApi } from "../api/sessions";
+import { sessionApi } from "../api/sessions.js";
 
 export const useCreateSession = () => {
   const result = useMutation({
@@ -8,19 +8,6 @@ export const useCreateSession = () => {
     mutationFn: sessionApi.createSession,
     onSuccess: () => toast.success("Session created successfully!"),
     onError: (error) => toast.error(error.response?.data?.message || "Failed to create room"),
-  });
-
-  return result;
-};
-
-export const useActiveSessions = () => {
-  const result = useQuery({
-    queryKey: ["activeSessions"],
-    queryFn: sessionApi.getActiveSessions,
-    staleTime: 10000, // Consider data fresh for 10 seconds
-    gcTime: 3 * 60 * 1000, // Keep in cache for 3 minutes
-    refetchOnWindowFocus: true, // Refetch on focus for active sessions
-    refetchInterval: 30000, // Refetch every 30 seconds for active sessions
   });
 
   return result;
