@@ -58,14 +58,29 @@ app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/chat", chatRoutes);
 app.use("/api/sessions", sessionRoutes);
 
-// make our app ready for deployment
-if (ENV.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-  app.get("/{*any}", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+// Root route
+app.get("/", (req, res) => {
+  res.status(200).json({ 
+    message: "HireFlow API Server", 
+    status: "running",
+    version: "1.0.0",
+    endpoints: {
+      health: "/health",
+      auth: "/api/auth",
+      sessions: "/api/sessions",
+      chat: "/api/chat"
+    }
   });
-}
+});
+
+// 404 handler for undefined routes
+app.use((req, res) => {
+  res.status(404).json({ 
+    message: "Route not found",
+    path: req.path,
+    method: req.method
+  });
+});
 
 const startServer = async () => {
   try {
