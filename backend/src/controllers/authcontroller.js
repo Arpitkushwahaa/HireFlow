@@ -6,7 +6,7 @@ import { ENV } from "../lib/env.js";
 // Sync current user from Clerk to MongoDB (temporary solution)
 export async function syncCurrentUser(req, res) {
   try {
-    const clerkId = req.auth?.userId;
+    const clerkId = req.auth()?.userId;
 
     if (!clerkId) {
       return res.status(401).json({ message: "Unauthorized" });
