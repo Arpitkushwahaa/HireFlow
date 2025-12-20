@@ -1,15 +1,15 @@
 import { useNavigate } from "react-router";
 import { useUser } from "@clerk/clerk-react";
 import { useState, useEffect } from "react";
-import { useCreateSession, useMyRecentSessions } from "../hooks/useSessions";
-import axiosInstance from "../lib/axios";
+import { useCreateSession, useMyRecentSessions } from "../hooks/useSessions.js";
+import axiosInstance from "../lib/axios.js";
 
-import Navbar from "../components/Navbar";
-import WelcomeSection from "../components/WelcomeSection";
-import RecentSessions from "../components/RecentSessions";
-import CreateSessionModal from "../components/CreateSessionModal";
-import JoinSessionModal from "../components/JoinSessionModal";
-import SessionCreatedModal from "../components/SessionCreatedModal";
+import Navbar from "../components/Navbar.jsx";
+import WelcomeSection from "../components/WelcomeSection.jsx";
+import RecentSessions from "../components/RecentSessions.jsx";
+import CreateSessionModal from "../components/CreateSessionModal.jsx";
+import JoinSessionModal from "../components/JoinSessionModal.jsx";
+import SessionCreatedModal from "../components/SessionCreatedModal.jsx";
 
 function DashboardPage() {
   const navigate = useNavigate();
