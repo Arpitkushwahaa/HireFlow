@@ -28,9 +28,16 @@ function DashboardPage() {
     const syncUser = async () => {
       try {
         await axiosInstance.post("/auth/sync");
+        console.log("✅ User synced successfully");
       } catch (error) {
         // User already synced or will be synced on next action
-        console.log("User sync:", error.response?.data?.message || "Synced");
+        const message = error.response?.data?.message || "User sync pending";
+        console.log("User sync:", message);
+        
+        // If it's a 401, it might be a Clerk token issue - but don't show error to user
+        if (error.response?.status === 401) {
+          console.warn("Authentication issue - user may need to sign in again");
+        }
       }
     };
 
