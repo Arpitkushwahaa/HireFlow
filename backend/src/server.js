@@ -50,13 +50,27 @@ app.get("/health", (req, res) => {
 
 app.use(clerkMiddleware()); // this adds auth field to request object: req.auth()
 
-// Auth routes (webhook needs raw body, but sync needs json)
-app.post("/api/auth/webhook", express.raw({ type: "application/json" }), authRoutes);
+// Auth routes - webhook needs to be registered separately before other routes
+app.post("/api/auth/webhook", express.raw({ type: "application/json" }), (req, res, next) => {
+  // Import and call the webhook handler directly
+  import("./controllers/authcontroller.js").then(module => {
+    module.clerkWebhook(req, res);
+  }).catch(next);
+});
+
+// Other auth routes (like /sync) are handled here
 app.use("/api/auth", authRoutes);
 
 app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/chat", chatRoutes);
 app.use("/api/sessions", sessionRoutes);
+
+console.log("✅ Routes registered:");
+console.log("   POST /api/auth/webhook (Clerk webhook)");
+console.log("   POST /api/auth/sync (User sync)");
+console.log("   GET  /api/sessions/my-recent");
+console.log("   POST /api/sessions");
+console.log("   GET  /api/chat/token");
 
 // Root route
 app.get("/", (req, res) => {
