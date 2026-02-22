@@ -20,7 +20,7 @@ function DashboardPage() {
 
   const createSessionMutation = useCreateSession();
 
-  const { data: recentSessionsData, isLoading: loadingRecentSessions } = useMyRecentSessions();
+  const { data: recentSessionsData, isLoading: loadingRecentSessions, isError, error } = useMyRecentSessions();
 
   // Note: User sync is handled automatically by Clerk webhooks
   // No manual sync needed here
@@ -45,6 +45,9 @@ function DashboardPage() {
   };
 
   const recentSessions = recentSessionsData?.sessions || [];
+  
+  // If 404 error, show empty sessions (backend needs deployment)
+  const showSessions = isError && error?.response?.status === 404 ? [] : recentSessions;
 
   return (
     <>
@@ -57,7 +60,7 @@ function DashboardPage() {
 
         {/* Grid layout */}
         <div className="container mx-auto px-6 pb-16">
-          <RecentSessions sessions={recentSessions} isLoading={loadingRecentSessions} />
+          <RecentSessions sessions={showSessions} isLoading={loadingRecentSessions} />
         </div>
       </div>
 
