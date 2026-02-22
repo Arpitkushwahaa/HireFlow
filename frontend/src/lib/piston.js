@@ -32,7 +32,14 @@ export async function executeCode(language, code) {
 
     return response.data;
   } catch (error) {
-    console.error("Code execution error:", error);
+    // Silently handle errors - backend may not be deployed yet
+    
+    if (error.response?.status === 404) {
+      return {
+        success: false,
+        error: "Code execution service is currently unavailable. Backend needs to be deployed.",
+      };
+    }
     
     if (error.response?.data) {
       return error.response.data;
