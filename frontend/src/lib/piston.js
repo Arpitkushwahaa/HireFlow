@@ -1,10 +1,5 @@
 // Piston API is a service for code execution
-// Using multiple endpoints for redundancy
-const PISTON_ENDPOINTS = [
-  "https://emkc.org/api/v2/piston",
-  "https://rextester.com/api/v2/piston",
-  "https://code-compiler.p.rapidapi.com/v2/piston",
-];
+const PISTON_API = "https://emkc.org/api/v2/piston";
 
 const LANGUAGE_VERSIONS = {
   javascript: { language: "javascript", version: "18.15.0" },
@@ -45,76 +40,62 @@ export async function executeCode(language, code) {
     ],
   };
 
-  // Try multiple endpoints until one works
-  let lastError = null;
-  let attemptedEndpoints = [];
-  
-  for (const endpoint of PISTON_ENDPOINTS) {
-    try {
-      console.log(`Attempting code execution with: ${endpoint}`);
-      
-      const response = await fetch(`${endpoint}/execute`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
+  try {
+    const response = await fetch(`${PISTON_API}/execute`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
 
-      attemptedEndpoints.push(endpoint);
-
-      // Handle specific error cases
-      if (response.status === 401) {
-        console.log(`⚠️ ${endpoint} returned 401, trying next endpoint...`);
-        lastError = `Authentication failed`;
-        continue; // Try next endpoint
-      }
-
-      if (response.status === 429) {
-        console.log(`⚠️ ${endpoint} returned 429 (rate limit)`);
-        lastError = "Rate limit exceeded";
-        continue; // Try next endpoint instead of stopping
-      }
-
-      if (!response.ok) {
-        console.log(`⚠️ ${endpoint} returned ${response.status}`);
-        lastError = `HTTP ${response.status}`;
-        continue; // Try next endpoint
-      }
-
-      const data = await response.json();
-      console.log(`✅ Code executed successfully on ${endpoint}`);
-
-      const output = data.run.output || "";
-      const stderr = data.run.stderr || "";
-
-      if (stderr) {
-        return {
-          success: false,
-          output: output,
-          error: stderr,
-        };
-      }
-
+    // Handle specific error cases
+    if (response.status === 401) {
       return {
-        success: true,
-        output: output || "No output",
+        success: false,
+        error: "Code execution service requires authentication. Please contact support or try again later.",
       };
-    } catch (error) {
-      console.log(`❌ ${endpoint} failed:`, error.message);
-      lastError = error.message;
-      attemptedEndpoints.push(endpoint);
-      continue; // Try next endpoint
     }
-  }
 
-  // All endpoints failed
-  console.error(`All ${attemptedEndpoints.length} endpoints failed. Last error: ${lastError}`);
-  return {
-    success: false,
-    error: `Unable to execute code. All execution services are currently unavailable. Please try again in a few moments.`,
-  };
+    if (response.status === 429) {
+      return {
+        success: false,
+        error: "Too many requests. Please wait a moment and try again.",
+      };
+    }
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: `Code execution failed with status ${response.status}. Please try again later.`,
+      };
+    }
+
+    const data = await response.json();
+
+    const output = data.run.output || "";
+    const stderr = data.run.stderr || "";
+
+    if (stderr) {
+      return {
+        success: false,
+        output: output,
+        error: stderr,
+      };
+    }
+
+    return {
+      success: true,
+      output: output || "No output",
+    };
+  } catch (error) {
+    console.error("Code execution error:", error);
+    return {
+      success: false,
+      error: `Unable to execute code. Network error: ${error.message}. Please check your internet connection and try again.`,
+    };
+  }
 }
 
 function getFileExtension(language) {
