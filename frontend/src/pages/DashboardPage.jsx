@@ -27,16 +27,20 @@ function DashboardPage() {
   useEffect(() => {
     const syncUser = async () => {
       try {
-        await axiosInstance.post("/auth/sync");
-        console.log("✅ User synced successfully");
+        const response = await axiosInstance.post("/auth/sync");
+        if (response.status === 200 || response.status === 201) {
+          console.log("✅ User synced successfully");
+        }
       } catch (error) {
-        // User already synced or will be synced on next action
-        const message = error.response?.data?.message || "User sync pending";
-        console.log("User sync:", message);
-        
-        // If it's a 401, it might be a Clerk token issue - but don't show error to user
+        // Silently handle errors - the axios interceptor will auto-retry if needed
+        // Only log for debugging purposes
         if (error.response?.status === 401) {
-          console.warn("Authentication issue - user may need to sign in again");
+          console.warn("Authentication check - Clerk token may need refresh");
+        } else if (error.response?.status === 200) {
+          // User already exists
+          console.log("User already synced");
+        } else {
+          console.log("User sync will be handled on next API call");
         }
       }
     };
