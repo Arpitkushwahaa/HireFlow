@@ -13,14 +13,27 @@ axiosInstance.interceptors.request.use(
       const token = await window.Clerk?.session?.getToken();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+      } else {
+        console.warn("No Clerk token available for request:", config.url);
       }
     } catch (error) {
-      console.log("Could not get auth token:", error);
+      console.error("Could not get auth token:", error);
     }
     return config;
   },
   (error) => {
     return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to handle errors better
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 404 && error.response?.data?.message?.includes("User not found")) {
+      console.error("User not synced to database. Attempting to sync...");
+      // You could trigger a sync here if needed
+    }    return Promise.reject(error);
   }
 );
 
