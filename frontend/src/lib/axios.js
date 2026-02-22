@@ -26,31 +26,17 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Add response interceptor to handle errors better
+// Add response interceptor for better error messages
 axiosInstance.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-    
-    // If we get a 404 "User not found" error and haven't retried yet
-    if (
-      error.response?.status === 404 && 
-      error.response?.data?.message?.includes("User not found") &&
-      !originalRequest._retry
-    ) {
-      console.error("User not synced to database. Attempting to sync...");
-      originalRequest._retry = true;
+  (error) => {
+    // Just log 404 errors without retrying to avoid infinite loops
+    if (error.response?.status === 404) {
+      const url = error.config?.url || 'unknown';
+      console.error(`404 Error: ${url} not found`);
       
-      try {
-        // Try to sync the user
-        await axiosInstance.post("/auth/sync");
-        console.log("✅ User synced successfully, retrying original request");
-        
-        // Retry the original request
-        return axiosInstance(originalRequest);
-      } catch (syncError) {
-        console.error("Failed to sync user:", syncError);
-        // If sync fails, let the original error propagate
+      if (error.response?.data?.message?.includes("User not found")) {
+        console.error("User not found in database. Please ensure your account is synced.");
       }
     }
     
