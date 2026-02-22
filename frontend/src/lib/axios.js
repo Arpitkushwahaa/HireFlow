@@ -28,6 +28,11 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Silently handle 404 errors from backend during deployment
+    if (error?.response?.status === 404) {
+      // Don't log 404s - backend may not be deployed yet
+      return Promise.reject(error);
+    }
     // Silently handle errors - don't spam console
     // Errors will be displayed in UI components
     return Promise.reject(error);
