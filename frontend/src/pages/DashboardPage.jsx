@@ -23,24 +23,23 @@ function DashboardPage() {
 
   const { data: recentSessionsData, isLoading: loadingRecentSessions } = useMyRecentSessions();
 
-  // Sync user to MongoDB on first load
+  // Sync user to MongoDB on first load (only once, not repeated)
   useEffect(() => {
+    let syncAttempted = false;
+    
     const syncUser = async () => {
+      if (syncAttempted) return;
+      syncAttempted = true;
+      
       try {
         const response = await axiosInstance.post("/auth/sync");
         if (response.status === 200 || response.status === 201) {
           console.log("✅ User synced successfully");
         }
       } catch (error) {
-        // Silently handle errors - the axios interceptor will auto-retry if needed
-        // Only log for debugging purposes
-        if (error.response?.status === 401) {
-          console.warn("Authentication check - Clerk token may need refresh");
-        } else if (error.response?.status === 200) {
-          // User already exists
-          console.log("User already synced");
-        } else {
-          console.log("User sync will be handled on next API call");
+        // If sync fails, user will be synced when they try to access protected routes
+        if (error.response?.status === 404) {
+          console.warn("Sync endpoint not available. User will be synced via webhook.");
         }
       }
     };
