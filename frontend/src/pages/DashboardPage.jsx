@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router";
 import { useUser } from "@clerk/clerk-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useCreateSession, useMyRecentSessions } from "../hooks/useSessions.js";
-import axiosInstance from "../lib/axios.js";
 
 import Navbar from "../components/Navbar.jsx";
 import WelcomeSection from "../components/WelcomeSection.jsx";
@@ -23,31 +22,8 @@ function DashboardPage() {
 
   const { data: recentSessionsData, isLoading: loadingRecentSessions } = useMyRecentSessions();
 
-  // Sync user to MongoDB on first load (only once, not repeated)
-  useEffect(() => {
-    let syncAttempted = false;
-    
-    const syncUser = async () => {
-      if (syncAttempted) return;
-      syncAttempted = true;
-      
-      try {
-        const response = await axiosInstance.post("/auth/sync");
-        if (response.status === 200 || response.status === 201) {
-          console.log("✅ User synced successfully");
-        }
-      } catch (error) {
-        // If sync fails, user will be synced when they try to access protected routes
-        if (error.response?.status === 404) {
-          console.warn("Sync endpoint not available. User will be synced via webhook.");
-        }
-      }
-    };
-
-    if (user) {
-      syncUser();
-    }
-  }, [user]);
+  // Note: User sync is handled automatically by Clerk webhooks
+  // No manual sync needed here
 
   const handleCreateRoom = () => {
     if (!roomConfig.problem || !roomConfig.difficulty || !roomConfig.interviewType) return;
