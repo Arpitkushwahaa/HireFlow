@@ -21,6 +21,14 @@ export const useMyRecentSessions = () => {
     gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
     refetchOnWindowFocus: false, // Don't refetch on window focus for better performance
     refetchOnMount: false, // Use cached data on mount
+    retry: (failureCount, error) => {
+      // Don't retry on 404 errors (route not found on backend)
+      if (error?.response?.status === 404) {
+        return false;
+      }
+      // Retry up to 2 times for other errors
+      return failureCount < 2;
+    },
   });
 
   return result;
