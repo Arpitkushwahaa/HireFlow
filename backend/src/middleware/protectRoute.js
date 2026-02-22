@@ -12,7 +12,7 @@ export const protectRoute = [
       const clerkId = req.auth()?.userId;
 
       if (!clerkId) {
-        console.error("No userId found in req.auth()");
+        console.error("No userId found in req.auth() for route:", req.path);
         return res.status(401).json({ message: "Unauthorized - no valid token provided" });
       }
 
@@ -20,8 +20,11 @@ export const protectRoute = [
       const user = await User.findOne({ clerkId });
 
       if (!user) {
-        console.error("User not found in database for clerkId:", clerkId);
-        return res.status(404).json({ message: "User not found in database. Please sync your account." });
+        console.error("User not found in database for clerkId:", clerkId, "on route:", req.path);
+        return res.status(404).json({ 
+          message: "User not found in database. Please sync your account.",
+          clerkId: clerkId 
+        });
       }
 
       // attach user to req
