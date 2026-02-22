@@ -8,6 +8,12 @@ const LANGUAGE_VERSIONS = {
   java: { language: "java", version: "15.0.2" },
 };
 
+// Retry configuration for API failures
+const MAX_RETRIES = 2;
+const RETRY_DELAY = 1000; // 1 second
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 /**
  * @param {string} language - programming language
  * @param {string} code - source code to executed
@@ -28,6 +34,7 @@ export async function executeCode(language, code) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
       },
       body: JSON.stringify({
         language: languageConfig.language,
@@ -40,6 +47,21 @@ export async function executeCode(language, code) {
         ],
       }),
     });
+
+    // Handle specific error cases
+    if (response.status === 401) {
+      return {
+        success: false,
+        error: "Code execution service is currently unavailable. The API may require authentication.",
+      };
+    }
+
+    if (response.status === 429) {
+      return {
+        success: false,
+        error: "Too many requests. Please wait a moment and try again.",
+      };
+    }
 
     if (!response.ok) {
       return {
