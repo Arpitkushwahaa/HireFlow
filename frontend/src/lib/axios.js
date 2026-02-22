@@ -13,11 +13,9 @@ axiosInstance.interceptors.request.use(
       const token = await window.Clerk?.session?.getToken();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-      } else {
-        console.warn("No Clerk token available for request:", config.url);
       }
     } catch (error) {
-      console.error("Could not get auth token:", error);
+      // Silently fail - token will be handled by Clerk
     }
     return config;
   },
@@ -30,16 +28,8 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Just log 404 errors without retrying to avoid infinite loops
-    if (error.response?.status === 404) {
-      const url = error.config?.url || 'unknown';
-      console.error(`404 Error: ${url} not found`);
-      
-      if (error.response?.data?.message?.includes("User not found")) {
-        console.error("User not found in database. Please ensure your account is synced.");
-      }
-    }
-    
+    // Silently handle errors - don't spam console
+    // Errors will be displayed in UI components
     return Promise.reject(error);
   }
 );
