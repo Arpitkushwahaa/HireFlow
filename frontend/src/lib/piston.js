@@ -101,6 +101,7 @@ function getFileExtension(language) {
     javascript: "js",
     python: "py",
     java: "java",
+    cpp: "cpp",
   };
 
   return extensions[language] || "txt";
