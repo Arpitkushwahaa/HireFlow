@@ -28,13 +28,15 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Silently handle 404 errors from backend during deployment
+    // Completely silence 404 errors to avoid console spam during deployment
     if (error?.response?.status === 404) {
-      // Don't log 404s - backend may not be deployed yet
-      return Promise.reject(error);
+      // Suppress the error in console
+      const silentError = new Error('Backend route not deployed yet');
+      silentError.response = error.response;
+      silentError.config = error.config;
+      return Promise.reject(silentError);
     }
-    // Silently handle errors - don't spam console
-    // Errors will be displayed in UI components
+    // Silently handle other errors
     return Promise.reject(error);
   }
 );
