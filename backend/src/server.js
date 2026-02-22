@@ -11,6 +11,7 @@ import { inngest, functions } from "./lib/inngest.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import sessionRoutes from "./routes/sessionRoute.js";
 import authRoutes from "./routes/authRoutes.js";
+import { clerkWebhook } from "./controllers/authcontroller.js";
 
 const app = express();
 
@@ -50,15 +51,10 @@ app.get("/health", (req, res) => {
 
 app.use(clerkMiddleware()); // this adds auth field to request object: req.auth()
 
-// Auth routes - webhook needs to be registered separately before other routes
-app.post("/api/auth/webhook", express.raw({ type: "application/json" }), (req, res, next) => {
-  // Import and call the webhook handler directly
-  import("./controllers/authcontroller.js").then(module => {
-    module.clerkWebhook(req, res);
-  }).catch(next);
-});
+// Auth routes - webhook needs raw body middleware
+app.post("/api/auth/webhook", express.raw({ type: "application/json" }), clerkWebhook);
 
-// Other auth routes (like /sync) are handled here
+// Other auth routes (like /sync)
 app.use("/api/auth", authRoutes);
 
 app.use("/api/inngest", serve({ client: inngest, functions }));
