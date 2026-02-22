@@ -11,6 +11,7 @@ import { inngest, functions } from "./lib/inngest.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import sessionRoutes from "./routes/sessionRoute.js";
 import authRoutes from "./routes/authRoutes.js";
+import codeRoutes from "./routes/codeRoutes.js";
 import { clerkWebhook } from "./controllers/authcontroller.js";
 
 const app = express();
@@ -60,12 +61,14 @@ app.use("/api/auth", authRoutes);
 app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/chat", chatRoutes);
 app.use("/api/sessions", sessionRoutes);
+app.use("/api/code", codeRoutes);
 
 console.log("✅ Routes registered:");
 console.log("   POST /api/auth/webhook (Clerk webhook)");
 console.log("   POST /api/auth/sync (User sync)");
 console.log("   GET  /api/sessions/my-recent");
 console.log("   POST /api/sessions");
+console.log("   POST /api/code/execute");
 console.log("   GET  /api/chat/token");
 
 // Root route
