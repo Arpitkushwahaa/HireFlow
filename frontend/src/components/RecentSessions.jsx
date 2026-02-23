@@ -1,14 +1,20 @@
-import { Code2, Clock, Users, Trophy, Loader } from "lucide-react";
+import { Code2, Clock, Users, Trophy, Loader, ArrowRight } from "lucide-react";
 import { getDifficultyBadgeClass } from "../lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { memo } from "react";
+import { useNavigate } from "react-router";
 
-const SessionCard = memo(({ session }) => (
+const SessionCard = memo(({ session }) => {
+  const navigate = useNavigate();
+  const isActive = session.status === "active";
+
+  return (
   <div
-    className={`card relative ${
-      session.status === "active"
-        ? "bg-success/10 border-success/30 hover:border-success/60"
-        : "bg-base-200 border-base-300 hover:border-primary/30"
+    onClick={() => isActive && navigate(`/session/${session._id}`)}
+    className={`card relative transition-all duration-200 ${
+      isActive
+        ? "bg-success/10 border-success/30 hover:border-success/60 cursor-pointer hover:shadow-lg hover:scale-[1.02]"
+        : "bg-base-200 border-base-300"
     }`}
   >
     {session.status === "active" && (
@@ -61,15 +67,22 @@ const SessionCard = memo(({ session }) => (
 
       <div className="flex items-center justify-between pt-3 border-t border-base-300">
         <span className="text-xs font-semibold opacity-80 uppercase">
-          {session.status === "active" ? "Live Now" : "Completed"}
+          {isActive ? "Live Now" : "Completed"}
         </span>
-        <span className="text-xs opacity-40">
-          {new Date(session.updatedAt).toLocaleDateString()}
-        </span>
+        {isActive ? (
+          <span className="flex items-center gap-1 text-xs text-success font-semibold">
+            Join <ArrowRight className="w-3 h-3" />
+          </span>
+        ) : (
+          <span className="text-xs opacity-40">
+            {new Date(session.updatedAt).toLocaleDateString()}
+          </span>
+        )}
       </div>
     </div>
   </div>
-));
+  );
+});
 
 SessionCard.displayName = 'SessionCard';
 
