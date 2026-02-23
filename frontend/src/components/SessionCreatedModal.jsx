@@ -47,7 +47,7 @@ function SessionCreatedModal({ session, onClose }) {
 
   return (
     <div className="modal modal-open">
-      <div className="modal-box max-w-md">
+      <div className="modal-box w-full max-w-sm sm:max-w-md mx-4">
         <h3 className="font-bold text-2xl mb-6 text-center">Session Created! 🎉</h3>
 
         <div className="space-y-6">
