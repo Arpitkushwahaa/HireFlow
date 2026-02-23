@@ -1,10 +1,13 @@
 // Code execution using Node.js built-in modules — no external APIs needed
 import vm from "vm";
-import { execSync } from "child_process";
+import { exec } from "child_process";
 import { writeFileSync, mkdirSync, rmSync } from "fs";
 import { join } from "path";
+import { promisify } from "util";
 import os from "os";
 import { randomUUID } from "crypto";
+
+const execAsync = promisify(exec);
 
 // Run JavaScript safely in a sandboxed vm context
 function runJavaScript(code) {
@@ -39,16 +42,20 @@ function runJavaScript(code) {
   return logs.join("\n") || "No output";
 }
 
-// Run Python/Java/C++ via child_process
-function runWithProcess(command, tmpDir) {
+// Run a shell command asynchronously (non-blocking)
+async function runWithProcess(command) {
   try {
-    const output = execSync(command, {
+    const { stdout, stderr } = await execAsync(command, {
       timeout: 15000,
       encoding: "utf8",
-      cwd: tmpDir,
     });
-    return { success: true, output: output || "No output" };
+    // Some programs write to stderr even on success, treat as error only if no stdout
+    if (stderr && !stdout) {
+      return { success: false, error: stderr };
+    }
+    return { success: true, output: stdout || "No output" };
   } catch (err) {
+    // err.stdout contains output before crash, err.stderr has the error
     const errMsg = err.stderr || err.stdout || err.message || "Unknown error";
     return { success: false, error: errMsg };
   }
@@ -61,7 +68,7 @@ export const executeCode = async (req, res) => {
     return res.status(400).json({ success: false, error: "Language and code are required" });
   }
 
-  // ── JavaScript (vm — no subprocess, always works) ──────────────────────────
+  // ── JavaScript (vm — sandboxed, always works, no subprocess needed) ──────────
   if (language === "javascript") {
     try {
       const output = runJavaScript(code);
@@ -71,7 +78,7 @@ export const executeCode = async (req, res) => {
     }
   }
 
-  // ── Python / Java / C++ (child_process on Render's Ubuntu env) ─────────────
+  // ── Python / Java / C++ (async child_process on Render's Ubuntu env) ─────────
   const tmpDir = join(os.tmpdir(), randomUUID());
   try {
     mkdirSync(tmpDir, { recursive: true });
@@ -79,16 +86,21 @@ export const executeCode = async (req, res) => {
     if (language === "python") {
       const file = join(tmpDir, "main.py");
       writeFileSync(file, code, "utf8");
-      const result = runWithProcess(`python3 "${file}" 2>&1`, tmpDir);
+      const result = await runWithProcess(`python3 "${file}"`);
       return res.json(result);
     }
 
     if (language === "java") {
       const file = join(tmpDir, "Main.java");
       writeFileSync(file, code, "utf8");
-      const compile = runWithProcess(`javac "${file}" 2>&1`, tmpDir);
+      // Check javac exists first
+      const check = await runWithProcess("which javac");
+      if (!check.success) {
+        return res.json({ success: false, error: "Java runtime is not available on this server. Please use JavaScript or Python." });
+      }
+      const compile = await runWithProcess(`javac "${file}"`);
       if (!compile.success) return res.json({ success: false, error: compile.error });
-      const run = runWithProcess(`java -cp "${tmpDir}" Main 2>&1`, tmpDir);
+      const run = await runWithProcess(`java -cp "${tmpDir}" Main`);
       return res.json(run);
     }
 
@@ -96,9 +108,14 @@ export const executeCode = async (req, res) => {
       const src = join(tmpDir, "main.cpp");
       const bin = join(tmpDir, "main");
       writeFileSync(src, code, "utf8");
-      const compile = runWithProcess(`g++ -o "${bin}" "${src}" 2>&1`, tmpDir);
+      // Check g++ exists first
+      const check = await runWithProcess("which g++");
+      if (!check.success) {
+        return res.json({ success: false, error: "C++ compiler is not available on this server. Please use JavaScript or Python." });
+      }
+      const compile = await runWithProcess(`g++ -o "${bin}" "${src}"`);
       if (!compile.success) return res.json({ success: false, error: compile.error });
-      const run = runWithProcess(`"${bin}" 2>&1`, tmpDir);
+      const run = await runWithProcess(`"${bin}"`);
       return res.json(run);
     }
 
