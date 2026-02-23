@@ -1,14 +1,14 @@
 import fetch from "node-fetch";
 
-// Official Judge0 public API - completely free, no API key needed
-const JUDGE0_API = "https://ce.judge0.com";
+// Piston API - free, no key needed, works server-to-server
+const PISTON_API = "https://emkc.org/api/v2/piston";
 
-// Judge0 language IDs
-const LANGUAGE_IDS = {
-  javascript: 63,  // Node.js 12.14.0
-  python: 71,      // Python 3.8.1
-  java: 62,        // Java OpenJDK 13.0.1
-  cpp: 54,         // C++ (GCC 9.2.0)
+// Piston language configs
+const LANGUAGE_CONFIGS = {
+  javascript: { language: "javascript", version: "18.15.0", filename: "main.js" },
+  python:     { language: "python",     version: "3.10.0",  filename: "main.py" },
+  java:       { language: "java",       version: "15.0.2",  filename: "Main.java" },
+  cpp:        { language: "c++",        version: "10.2.0",  filename: "main.cpp" },
 };
 
 export const executeCode = async (req, res) => {
@@ -22,34 +22,29 @@ export const executeCode = async (req, res) => {
       });
     }
 
-    const languageId = LANGUAGE_IDS[language];
+    const langConfig = LANGUAGE_CONFIGS[language];
 
-    if (!languageId) {
+    if (!langConfig) {
       return res.status(400).json({
         success: false,
         error: `Unsupported language: ${language}`,
       });
     }
 
-    const response = await fetch(
-      `${JUDGE0_API}/submissions?base64_encoded=false&wait=true`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-        },
-        body: JSON.stringify({
-          language_id: languageId,
-          source_code: code,
-          stdin: "",
-        }),
-      }
-    );
+    const response = await fetch(`${PISTON_API}/execute`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        language: langConfig.language,
+        version:  langConfig.version,
+        files: [{ name: langConfig.filename, content: code }],
+        stdin: "",
+      }),
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Judge0 API error (${response.status}):`, errorText);
+      console.error(`Piston API error (${response.status}):`, errorText);
       return res.status(500).json({
         success: false,
         error: "Code execution service temporarily unavailable.",
@@ -58,16 +53,15 @@ export const executeCode = async (req, res) => {
 
     const result = await response.json();
 
-    const stdout = result.stdout || "";
-    const stderr = result.stderr || "";
-    const compileOutput = result.compile_output || "";
-    const errorOutput = stderr || compileOutput;
+    const stdout   = result.run?.stdout || "";
+    const stderr   = result.run?.stderr || "";
+    const exitCode = result.run?.code;
 
-    if (errorOutput) {
+    if (stderr || (exitCode !== 0 && exitCode !== null)) {
       return res.json({
         success: false,
         output: stdout,
-        error: errorOutput,
+        error: stderr || `Process exited with code ${exitCode}`,
       });
     }
 
