@@ -6,6 +6,7 @@ import { useCreateSession, useMyRecentSessions } from "../hooks/useSessions.js";
 import Navbar from "../components/Navbar.jsx";
 import WelcomeSection from "../components/WelcomeSection.jsx";
 import RecentSessions from "../components/RecentSessions.jsx";
+import StatsCards from "../components/StatsCards.jsx";
 import CreateSessionModal from "../components/CreateSessionModal.jsx";
 import JoinSessionModal from "../components/JoinSessionModal.jsx";
 import SessionCreatedModal from "../components/SessionCreatedModal.jsx";
@@ -45,9 +46,9 @@ function DashboardPage() {
   };
 
   const recentSessions = recentSessionsData?.sessions || [];
-  
-  // If 404 error, show empty sessions (backend needs deployment)
-  const showSessions = isError && error?.response?.status === 404 ? [] : recentSessions;
+  // Show empty on any error (404 = not deployed, 401 = not authed yet)
+  const showSessions = isError ? [] : recentSessions;
+  const activeSessions = showSessions.filter(s => s.status === "active");
 
   return (
     <>
@@ -58,8 +59,12 @@ function DashboardPage() {
           onJoinSession={() => setShowJoinModal(true)}
         />
 
-        {/* Grid layout */}
+        {/* Stats + Sessions */}
         <div className="container mx-auto px-6 pb-16">
+          <StatsCards
+            activeSessionsCount={activeSessions.length}
+            recentSessionsCount={showSessions.length}
+          />
           <RecentSessions sessions={showSessions} isLoading={loadingRecentSessions} />
         </div>
       </div>
