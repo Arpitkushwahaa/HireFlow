@@ -57,18 +57,26 @@ function ProblemPage() {
   };
 
   const normalizeOutput = (output) => {
-    // normalize output for comparison (trim whitespace, handle different spacing)
+    if (!output) return "";
     return output
       .trim()
       .split("\n")
       .map((line) =>
         line
           .trim()
-          // remove spaces after [ and before ]
+          // remove spaces after [ and before ] e.g. Node.js prints [ 0, 1 ]
           .replace(/\[\s+/g, "[")
           .replace(/\s+\]/g, "]")
-          // normalize spaces around commas to single space after comma
+          // normalize all comma spacing: ', ' or ' ,' or ',' -> ','
           .replace(/\s*,\s*/g, ",")
+          // normalize spaces inside parentheses
+          .replace(/\(\s+/g, "(")
+          .replace(/\s+\)/g, ")")
+          // lowercase true/false/null/none for cross-language compare
+          .replace(/\bTrue\b/g, "true")
+          .replace(/\bFalse\b/g, "false")
+          .replace(/\bNone\b/g, "null")
+          .replace(/\bnull\b/g, "null")
       )
       .filter((line) => line.length > 0)
       .join("\n");
