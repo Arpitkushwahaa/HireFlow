@@ -1,4 +1,5 @@
 import { requireAuth } from "@clerk/express";
+import { clerkClient } from "@clerk/express";
 import User from "../models/User.js";
 
 export const protectRoute = [
@@ -12,19 +13,27 @@ export const protectRoute = [
       const clerkId = req.auth()?.userId;
 
       if (!clerkId) {
-        console.error("No userId found in req.auth() for route:", req.path);
         return res.status(401).json({ message: "Unauthorized - no valid token provided" });
       }
 
       // find user in db by clerk ID
-      const user = await User.findOne({ clerkId });
+      let user = await User.findOne({ clerkId });
 
+      // Auto-create user if not found (in case webhook was missed)
       if (!user) {
-        console.error("User not found in database for clerkId:", clerkId, "on route:", req.path);
-        return res.status(404).json({ 
-          message: "User not found in database. Please sync your account.",
-          clerkId: clerkId 
-        });
+        try {
+          const clerkUser = await clerkClient.users.getUser(clerkId);
+          user = await User.create({
+            clerkId: clerkUser.id,
+            email: clerkUser.emailAddresses[0].emailAddress,
+            profileImage: clerkUser.imageUrl,
+            name: `${clerkUser.firstName || ""} ${clerkUser.lastName || ""}`.trim() || "User",
+          });
+          console.log("✅ Auto-created user in database:", user.email);
+        } catch (createError) {
+          console.error("Failed to auto-create user:", createError);
+          return res.status(401).json({ message: "Unable to authenticate user. Please try again." });
+        }
       }
 
       // attach user to req
