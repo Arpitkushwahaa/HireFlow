@@ -60,7 +60,7 @@ function DashboardPage() {
         />
 
         {/* Stats + Sessions */}
-        <div className="container mx-auto px-6 pb-16">
+        <div className="container mx-auto px-4 sm:px-6 pb-10 sm:pb-16">
           <StatsCards
             activeSessionsCount={activeSessions.length}
             recentSessionsCount={showSessions.length}
