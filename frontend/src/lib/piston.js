@@ -1,23 +1,15 @@
-// Piston API is a service for code execution
-// Using backend proxy to avoid CORS and authentication issues
+// Code execution via backend proxy (Judge0 API)
 import axiosInstance from "./axios.js";
 
-const LANGUAGE_VERSIONS = {
-  javascript: { language: "javascript", version: "18.15.0" },
-  python: { language: "python", version: "3.10.0" },
-  java: { language: "java", version: "15.0.2" },
-  cpp: { language: "c++", version: "10.2.0" },
-};
+const SUPPORTED_LANGUAGES = ["javascript", "python", "java", "cpp"];
 
 /**
  * @param {string} language - programming language
- * @param {string} code - source code to executed
+ * @param {string} code - source code to execute
  * @returns {Promise<{success:boolean, output?:string, error?: string}>}
  */
 export async function executeCode(language, code) {
-  const languageConfig = LANGUAGE_VERSIONS[language];
-
-  if (!languageConfig) {
+  if (!SUPPORTED_LANGUAGES.includes(language)) {
     return {
       success: false,
       error: `Unsupported language: ${language}`,
@@ -32,15 +24,6 @@ export async function executeCode(language, code) {
 
     return response.data;
   } catch (error) {
-    // Silently handle errors - backend may not be deployed yet
-    
-    if (error.response?.status === 404) {
-      return {
-        success: false,
-        error: "Code execution service is currently unavailable. Backend needs to be deployed.",
-      };
-    }
-    
     if (error.response?.data) {
       return error.response.data;
     }
