@@ -22,7 +22,7 @@ function CreateSessionModal({
 
   return (
     <div className="modal modal-open">
-      <div className="modal-box max-w-2xl">
+      <div className="modal-box w-full max-w-lg sm:max-w-2xl mx-4">
         <h3 className="font-bold text-2xl mb-6">Create New Session</h3>
 
         <div className="space-y-8">
