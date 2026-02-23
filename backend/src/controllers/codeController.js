@@ -1,5 +1,4 @@
-import fetch from "node-fetch";
-
+// Uses Node.js 18+ built-in fetch — no extra dependencies needed
 // Piston API - free, no key needed, works server-to-server
 const PISTON_API = "https://emkc.org/api/v2/piston";
 
