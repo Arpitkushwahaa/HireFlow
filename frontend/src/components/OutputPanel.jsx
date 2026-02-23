@@ -4,11 +4,26 @@ function OutputPanel({ output }) {
       <div className="px-4 py-2 bg-base-200 border-b border-base-300 font-semibold text-sm">
         Output
       </div>
-      <div className="flex-1 overflow-auto p-4">
+      <div className="flex-1 overflow-auto p-4 space-y-3">
         {output === null ? (
           <p className="text-base-content/50 text-sm">Click "Run Code" to see the output here...</p>
         ) : output.success ? (
-          <pre className="text-sm font-mono text-success whitespace-pre-wrap">{output.output}</pre>
+          <>
+            <div>
+              <p className="text-xs text-base-content/50 mb-1 uppercase tracking-wide">Your Output</p>
+              <pre className={`text-sm font-mono whitespace-pre-wrap ${output.testsPassed ? "text-success" : "text-warning"}`}>
+                {output.output}
+              </pre>
+            </div>
+            {output.testsPassed === false && output.expectedOutput && (
+              <div>
+                <p className="text-xs text-base-content/50 mb-1 uppercase tracking-wide">Expected Output</p>
+                <pre className="text-sm font-mono text-success whitespace-pre-wrap">
+                  {output.expectedOutput}
+                </pre>
+              </div>
+            )}
+          </>
         ) : (
           <div>
             {output.output && (
