@@ -7,10 +7,21 @@ import {
   UsersIcon,
   VideoIcon,
   ZapIcon,
+  LinkIcon,
 } from "lucide-react";
 import { SignInButton } from "@clerk/clerk-react";
+import { useState, useEffect } from "react";
 
 function HomePage() {
+  const [inviteRedirect, setInviteRedirect] = useState(null);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("redirectAfterLogin");
+    if (saved && saved.startsWith("/session/")) {
+      setInviteRedirect(saved);
+    }
+  }, []);
+
   return (
     <div className="bg-gradient-to-br from-base-100 via-base-200 to-base-300">
       {/* NAVBAR */}
@@ -43,6 +54,29 @@ function HomePage() {
           </SignInButton>
         </div>
       </nav>
+
+      {/* INVITE BANNER — shown when user arrived via a shared session link */}
+      {inviteRedirect && (
+        <div className="bg-gradient-to-r from-primary/20 via-secondary/20 to-accent/20 border-b border-primary/30">
+          <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/20 rounded-xl">
+                <LinkIcon className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="font-bold text-base-content">You've been invited to a coding session!</p>
+                <p className="text-sm text-base-content/60">Sign in to join the interview session instantly.</p>
+              </div>
+            </div>
+            <SignInButton mode="modal">
+              <button className="btn btn-primary btn-sm gap-2 shrink-0 shadow-lg hover:shadow-primary/50">
+                <ArrowRightIcon className="w-4 h-4" />
+                Sign in &amp; Join Session
+              </button>
+            </SignInButton>
+          </div>
+        </div>
+      )}
 
       {/* HERO SECTION */}
       <div className="max-w-7xl mx-auto px-4 py-20">
@@ -93,7 +127,7 @@ function HomePage() {
                 </button>
               </SignInButton>
 
-              
+
             </div>
 
             {/* STATS */}
